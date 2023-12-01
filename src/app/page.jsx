@@ -1,11 +1,12 @@
-import Link from "next/link"
 import AnimeList from "@/components/AnimeList"
 import Header from "@/components/AnimeList/header"
+import { getAnimeResponse, getNestedAnimeResponse, reproduce, shuffleRecommendAnime } from "../libs/api-libs"
 
 const Page = async () => {
 
-  const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/top/anime?limit=4`)
-  const topAnime = await response.json()
+  const topAnime = await getAnimeResponse("top/anime", "limit=8")
+  let recommendAnime = await getNestedAnimeResponse("recommendations/anime", "entry")
+  recommendAnime = reproduce(recommendAnime, 4)
 
   return (
     <>
@@ -17,8 +18,8 @@ const Page = async () => {
 
       {/* Latest Anime */}
       <section>
-        <Header title={"Latest Anime"} linkHref={"/latest"} linkTitle={"See All"} />
-        <AnimeList api={topAnime} />
+        <Header title={"Recommendation"} linkHref={"/recommendation"} linkTitle={"See All"} />
+        <AnimeList api={recommendAnime} />
       </section>
     </>
   )
